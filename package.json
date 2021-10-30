@@ -1,16 +1,16 @@
 {
   "private": true,
-  "displayName": "Plugin Name",
-  "name": "homebridge-plugin-name",
+  "displayName": "esp32 Beacon",
+  "name": "Homebridge-esp32Beacon",
   "version": "1.0.0",
-  "description": "A short description about what your plugin does.",
+  "description": "Presence detector based on esp32 for Homebridge",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/USERNAME/GITHUB_PROJECT_NAME.git"
+    "url": "git://github.com/Guillaume351/Homebridge-esp32Beacon.git"
   },
   "bugs": {
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+    "url": "https://github.com/Guillaume351/Homebridge-esp32Beacon/issues"
   },
   "engines": {
     "node": ">=14.18.1",
@@ -26,7 +26,6 @@
   "keywords": [
     "homebridge-plugin"
   ],
-  "dependencies": {},
   "devDependencies": {
     "@types/node": "^16.10.9",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
