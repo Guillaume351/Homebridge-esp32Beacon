@@ -34,8 +34,8 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
     this.log.info('Starting esp32Beacon server...');
 
     this.log.debug('Starting REST server ...');
-    const PORT: any = 6060;
-    httpServer.listen(PORT, () => console.log('The server is running on port ${PORT}'));
+    const PORT = 6060;
+    httpServer.listen(PORT);
     this.log.debug('REST server started on PORT ', PORT);
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
