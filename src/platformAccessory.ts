@@ -1,6 +1,6 @@
 import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 
-import { ExampleHomebridgePlatform } from './platform';
+import { BeaconPlatform } from './platform';
 
 /**
  * Platform Accessory
@@ -19,30 +19,30 @@ export class EspSwitchPlatformAccessory {
   };
 
   constructor(
-    private readonly platform: ExampleHomebridgePlatform,
+    private readonly platform: BeaconPlatform,
     private readonly accessory: PlatformAccessory,
   ) {
 
     // set accessory information
-    this.accessory.getService(ExampleHomebridgePlatform.Service.AccessoryInformation)!
-      .setCharacteristic(ExampleHomebridgePlatform.Characteristic.Manufacturer, 'Default-Manufacturer')
-      .setCharacteristic(ExampleHomebridgePlatform.Characteristic.Model, 'Default-Model')
-      .setCharacteristic(ExampleHomebridgePlatform.Characteristic.SerialNumber, 'Default-Serial');
+    this.accessory.getService(BeaconPlatform.Service.AccessoryInformation)!
+      .setCharacteristic(BeaconPlatform.Characteristic.Manufacturer, 'Default-Manufacturer')
+      .setCharacteristic(BeaconPlatform.Characteristic.Model, 'Default-Model')
+      .setCharacteristic(BeaconPlatform.Characteristic.SerialNumber, 'Default-Serial');
 
     // get the Switch service if it exists, otherwise create a new Switch service
     // you can create multiple services for each accessory
-    this.service = this.accessory.getService(ExampleHomebridgePlatform.Service.OccupancySensor) || this.accessory.addService(ExampleHomebridgePlatform.Service.OccupancySensor);
+    this.service = this.accessory.getService(BeaconPlatform.Service.OccupancySensor) ||
+    this.accessory.addService(BeaconPlatform.Service.OccupancySensor);
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(ExampleHomebridgePlatform.Characteristic.Name, accessory.context.device.exampleDisplayName);
-    //this.service.setCharacteristic(ExampleHomebridgePlatform.Characteristic.On, this.esp32SwitchStates.On);
+    this.service.setCharacteristic(BeaconPlatform.Characteristic.Name, accessory.context.device.exampleDisplayName);
 
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Lightbulb
 
     // register handlers for the On/Off Characteristic
-    this.service.getCharacteristic(ExampleHomebridgePlatform.Characteristic.OccupancyDetected)
+    this.service.getCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected)
       .onSet(this.setOn.bind(this))                // SET - bind to the `setOn` method below
       .onGet(this.getOn.bind(this));               // GET - bind to the `getOn` method below
   }

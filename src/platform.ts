@@ -10,7 +10,7 @@ import httpServer from './server';
  * This class is the main constructor for your plugin, this is where you should
  * parse the user config and discover/register accessories with Homebridge.
  */
-export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
+export class BeaconPlatform implements DynamicPlatformPlugin {
   public static Service: typeof Service;
   public static Characteristic: typeof Characteristic;
 
@@ -25,9 +25,9 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
     public readonly api: API,
   ) {
     this.log.debug('Finished initializing platform:', this.config.name);
-    ExampleHomebridgePlatform.apiAccess = this.api;
-    ExampleHomebridgePlatform.Service = this.api.hap.Service;
-    ExampleHomebridgePlatform.Characteristic = this.api.hap.Characteristic;
+    BeaconPlatform.apiAccess = this.api;
+    BeaconPlatform.Service = this.api.hap.Service;
+    BeaconPlatform.Characteristic = this.api.hap.Characteristic;
 
 
 
@@ -57,7 +57,7 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
     this.log.info('Loading accessory from cache:', accessory.displayName);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
-    ExampleHomebridgePlatform.accessories.push(accessory);
+    BeaconPlatform.accessories.push(accessory);
   }
 
   /**
@@ -87,7 +87,7 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
 
       // see if an accessory with the same uuid has already been registered and restored from
       // the cached devices we stored in the `configureAccessory` method above
-      const existingAccessory = ExampleHomebridgePlatform.accessories.find(accessory => accessory.UUID === uuid);
+      const existingAccessory = BeaconPlatform.accessories.find(accessory => accessory.UUID === uuid);
 
       if (existingAccessory) {
         // the accessory already exists
