@@ -1,7 +1,9 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { ExamplePlatformAccessory } from './platformAccessory';
+import { EspSwitchPlatformAccessory } from './platformAccessory';
+
+import httpServer from './server';
 
 /**
  * HomebridgePlatform
@@ -9,11 +11,13 @@ import { ExamplePlatformAccessory } from './platformAccessory';
  * parse the user config and discover/register accessories with Homebridge.
  */
 export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
-  public readonly Service: typeof Service = this.api.hap.Service;
-  public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
+  public static Service: typeof Service;
+  public static Characteristic: typeof Characteristic;
 
   // this is used to track restored cached accessories
-  public readonly accessories: PlatformAccessory[] = [];
+  public static readonly accessories: PlatformAccessory[] = [];
+
+  public static apiAccess : API;
 
   constructor(
     public readonly log: Logger,
@@ -21,6 +25,18 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
     public readonly api: API,
   ) {
     this.log.debug('Finished initializing platform:', this.config.name);
+    ExampleHomebridgePlatform.apiAccess = this.api;
+    ExampleHomebridgePlatform.Service = this.api.hap.Service;
+    ExampleHomebridgePlatform.Characteristic = this.api.hap.Characteristic;
+
+
+
+    this.log.info('Starting esp32Beacon server...');
+
+    this.log.debug('Starting REST server ...');
+    const PORT: any = 6060;
+    httpServer.listen(PORT, () => console.log('The server is running on port ${PORT}'));
+    this.log.debug('REST server started on PORT ', PORT);
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
     // Dynamic Platform plugins should only register new accessories after this event was fired,
@@ -41,7 +57,7 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
     this.log.info('Loading accessory from cache:', accessory.displayName);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
-    this.accessories.push(accessory);
+    ExampleHomebridgePlatform.accessories.push(accessory);
   }
 
   /**
@@ -59,10 +75,6 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
         exampleUniqueId: 'ABCD',
         exampleDisplayName: 'Bedroom',
       },
-      {
-        exampleUniqueId: 'EFGH',
-        exampleDisplayName: 'Kitchen',
-      },
     ];
 
     // loop over the discovered devices and register each one if it has not already been registered
@@ -75,7 +87,7 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
 
       // see if an accessory with the same uuid has already been registered and restored from
       // the cached devices we stored in the `configureAccessory` method above
-      const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+      const existingAccessory = ExampleHomebridgePlatform.accessories.find(accessory => accessory.UUID === uuid);
 
       if (existingAccessory) {
         // the accessory already exists
@@ -87,7 +99,7 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
 
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        new ExamplePlatformAccessory(this, existingAccessory);
+        new EspSwitchPlatformAccessory(this, existingAccessory);
 
         // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
         // remove platform accessories when no longer present
@@ -106,7 +118,7 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
 
         // create the accessory handler for the newly create accessory
         // this is imported from `platformAccessory.ts`
-        new ExamplePlatformAccessory(this, accessory);
+        new EspSwitchPlatformAccessory(this, accessory);
 
         // link the accessory to your platform
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
