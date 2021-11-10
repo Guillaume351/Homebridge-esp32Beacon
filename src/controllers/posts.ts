@@ -1,33 +1,52 @@
 import { Request, Response, NextFunction } from 'express';
-import { ExampleHomebridgePlatform } from '../platform';
+import { BeaconPlatform } from '../platform';
 import { Logger } from 'homebridge';
+import { Beacon } from '../beaconHandler';
 
-const setOn = async (req: Request, res: Response, next: NextFunction) => {
+const registerBeacon = async (req: Request, res: Response, next: NextFunction) => {
   // get the post id from the req
   const uid: string = req.params.uid;
 
-  const uuid = ExampleHomebridgePlatform.apiAccess.hap.uuid.generate(uid);
+  const uuid = BeaconPlatform.apiAccess.hap.uuid.generate(uid);
   // get the switch
-  const existingAccessory = ExampleHomebridgePlatform.accessories.find(accessory => accessory.UUID === uuid);
+  const existingAccessory = BeaconPlatform.accessories.find(accessory => accessory.UUID === uuid);
   if(existingAccessory){
-
-    console.log('Turning on', uuid);
-    // turn it on
-    existingAccessory.getService(ExampleHomebridgePlatform.Service.OccupancySensor)?.updateCharacteristic(ExampleHomebridgePlatform.Characteristic.OccupancyDetected, true);
     return res.status(200).json({
-      message: 'Turned on ' + uuid,
+      message: 'Device already registered : ' + uuid,
     });
 
 
   } else {
-    return res.status(404).json({
-      message: 'Error not found ' + uuid,
+    BeaconPlatform.instance.addNewAccessory('Beacon', uuid);
+    return res.status(200).json({
+      message: 'Device successfully registered ' + uuid,
     });
   }
 
+};
 
+const beaconTrack = async (req: Request, res: Response, next: NextFunction) => {
+  // get the post id from the req
+  const uid: string = req.params.uid;
+  const deviceMac: string = req.params.deviceMac;
+  const rssi = Number(req.params.rssi);
+
+  const uuid = BeaconPlatform.apiAccess.hap.uuid.generate(uid);
+  // get the switch
+  const existingAccessory = BeaconPlatform.accessories.find(accessory => accessory.UUID === uuid);
+  if(existingAccessory){
+    const beacon: Beacon = BeaconPlatform.instance.beaconHandler.getBeaconByUuid(uuid);
+    beacon.addTrack(deviceMac, rssi);
+    return res.status(200).json({
+      message: 'Track successfuly saved : ' + uuid,
+    });
+  } else {
+    return res.status(404).json({
+      message: 'Beacon not found ' + uuid,
+    });
+  }
 
 };
 
 
-export default { setOn };
+export default { registerBeacon, beaconTrack};

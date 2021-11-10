@@ -4,6 +4,8 @@ import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { EspSwitchPlatformAccessory } from './platformAccessory';
 
 import httpServer from './server';
+import { UUID } from 'hap-nodejs';
+import { BeaconHandler } from './beaconHandler';
 
 /**
  * HomebridgePlatform
@@ -11,6 +13,8 @@ import httpServer from './server';
  * parse the user config and discover/register accessories with Homebridge.
  */
 export class BeaconPlatform implements DynamicPlatformPlugin {
+  public static instance; // TODO : replace this once I learn typescript/javascript..
+
   public static Service: typeof Service;
   public static Characteristic: typeof Characteristic;
 
@@ -19,17 +23,20 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
 
   public static apiAccess : API;
 
+  public beaconHandler: BeaconHandler;
+
   constructor(
     public readonly log: Logger,
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
+    BeaconPlatform.instance = this;
+    this.beaconHandler = new BeaconHandler();
+
     this.log.debug('Finished initializing platform:', this.config.name);
     BeaconPlatform.apiAccess = this.api;
     BeaconPlatform.Service = this.api.hap.Service;
     BeaconPlatform.Characteristic = this.api.hap.Characteristic;
-
-
 
     this.log.info('Starting esp32Beacon server...');
 
@@ -45,7 +52,7 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
     this.api.on('didFinishLaunching', () => {
       log.debug('Executed didFinishLaunching callback');
       // run the method to discover / register your devices as accessories
-      this.discoverDevices();
+      //this.discoverDevices();
     });
   }
 
@@ -56,8 +63,34 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
   configureAccessory(accessory: PlatformAccessory) {
     this.log.info('Loading accessory from cache:', accessory.displayName);
 
+    // add the beacon to the beacon handler
+    this.beaconHandler.addBeacon(accessory);
+
     // add the restored accessory to the accessories cache so we can track if it has already been registered
     BeaconPlatform.accessories.push(accessory);
+  }
+
+  public addNewAccessory(displayName: string, uuid: string){
+    // the accessory does not yet exist, so we need to create it
+    this.log.info('Adding new accessory:', displayName);
+
+    // create a new accessory
+    const accessory = new this.api.platformAccessory(displayName, uuid);
+
+    // store a copy of the device object in the `accessory.context`
+    // the `context` property can be used to store any data about the accessory you may need
+    //accessory.context.device = device;
+
+    // create the accessory handler for the newly create accessory
+    // this is imported from `platformAccessory.ts`
+    new EspSwitchPlatformAccessory(this, accessory);
+
+    // link the accessory to your platform
+    this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+
+    // add the beacon to the beacon handler
+    this.beaconHandler.addBeacon(accessory);
+
   }
 
   /**
