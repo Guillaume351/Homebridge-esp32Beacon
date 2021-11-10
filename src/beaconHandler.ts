@@ -35,20 +35,20 @@ export class Beacon {
   public updateState(){
     const service = this.accessory.getService(BeaconPlatform.Service.OccupancySensor)!;
     if(this.trackHistory.length > 0){
-      console.log('Turning on', this.accessory.UUID);
       service.updateCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected, true);
     } else {
-      console.log('Turning off', this.accessory.UUID);
       service.updateCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected, false);
     }
 
   }
 
   public addTrack(deviceMac: string, rssi: number){
-    this.trackHistory.push(deviceMac);
-    this.updateState();
-    setTimeout(
-      this.removeOldestTrack, 10000);
+    if(rssi < -70) { // TODO : replace by a better system
+      this.trackHistory.push(deviceMac);
+      this.updateState();
+      setTimeout(
+        this.removeOldestTrack, 10000);
+    }
   }
 
   public removeDevice(deviceMac: string){

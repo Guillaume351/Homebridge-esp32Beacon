@@ -4,7 +4,6 @@ import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { EspSwitchPlatformAccessory } from './platformAccessory';
 
 import httpServer from './server';
-import { UUID } from 'hap-nodejs';
 import { BeaconHandler } from './beaconHandler';
 
 /**
