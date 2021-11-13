@@ -43,11 +43,13 @@ export class Beacon {
   }
 
   public addTrack(deviceMac: string, rssi: number){
-    if(rssi < -70) { // TODO : replace by a better system
+    if(rssi > -75) { // TODO : replace by a better system
       this.trackHistory.push(deviceMac);
+      setTimeout(() => {
+        this.removeOldestTrack();
+      }
+      , 10000);
       this.updateState();
-      setTimeout(
-        this.removeOldestTrack, 10000);
     }
   }
 
@@ -57,8 +59,10 @@ export class Beacon {
   }
 
   private removeOldestTrack(){
-    this.trackHistory.shift();
-    this.updateState();
+    if(this.trackHistory.length > 0) {
+      this.trackHistory.shift();
+      this.updateState();
+    }
   }
 
 

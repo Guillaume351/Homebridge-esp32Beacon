@@ -90,6 +90,7 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
     // add the beacon to the beacon handler
     this.beaconHandler.addBeacon(accessory);
 
+    BeaconPlatform.accessories.push(accessory);
   }
 
   /**

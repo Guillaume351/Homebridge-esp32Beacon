@@ -1,5 +1,5 @@
 {
-  "private": true,
+  "private": false,
   "displayName": "esp32 Beacon",
   "name": "homebridge-esp32beacon",
   "version": "1.0.0",
