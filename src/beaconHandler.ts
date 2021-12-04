@@ -53,7 +53,7 @@ export class Beacon {
       this.updateState();
     } else if (rssi > -85){ // TODO : only accept second if it's the device that's keeping the light awake
       const service = this.accessory.getService(BeaconPlatform.Service.OccupancySensor)!;
-      if(service.getCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected).value === true){ // If the light was already awake
+      if((service.getCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected).value as boolean)){ // If the light was already awake
         this.trackHistory.push(deviceMac);
         setTimeout(() => {
           this.removeOldestTrack();
