@@ -1,5 +1,4 @@
 import { PlatformAccessory } from 'homebridge';
-import { Server } from 'http';
 import { BeaconPlatform } from './platform';
 
 export class BeaconHandler {
