@@ -50,16 +50,19 @@ export class Beacon {
       }
       , 10000);
       this.updateState();
-    } else if (rssi > -85){ // TODO : only accept second if it's the device that's keeping the light awake
-      const service = this.accessory.getService(BeaconPlatform.Service.OccupancySensor)!;
-      if((service.getCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected).value as boolean)){ // If the light was already awake
-        this.trackHistory.push(deviceMac);
-        setTimeout(() => {
-          this.removeOldestTrack();
+    } else if (rssi > -85){ // only accept lower signal if the device has been closer than triggering signal (-75)
+      if(this.trackHistory.some(track => track === deviceMac)){
+        const service = this.accessory.getService(BeaconPlatform.Service.OccupancySensor)!;
+        if((service.getCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected).value as boolean)){ // If the light was already awake
+          this.trackHistory.push(deviceMac);
+          setTimeout(() => {
+            this.removeOldestTrack();
+          }
+          , 5000);
+          this.updateState();
         }
-        , 5000);
-        this.updateState();
       }
+
 
     }
   }
