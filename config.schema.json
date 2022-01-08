@@ -9,16 +9,18 @@
         "title": "Name",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "esp32beacon Platform"
       },
       "triggerDetectionThreshold": {
         "title": "Trigger Detection Threshold : RSSI value",
         "type": "number",
+        "required": true,
         "placeholder": "-65"
       },
       "maintainDetectionThreshold": {
         "title": "Maintain Detection Threshold : RSSI value, must be smaller than trigger value",
         "type": "number",
+        "required": true,
         "placeholder": "-75"
       }
 
