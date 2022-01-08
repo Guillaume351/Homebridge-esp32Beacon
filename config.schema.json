@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "homebridge-esp32beacon",
   "pluginType": "platform",
   "singular": true,
   "schema": {
@@ -10,7 +10,18 @@
         "type": "string",
         "required": true,
         "default": "Example Dynamic Platform"
+      },
+      "triggerDetectionThreshold": {
+        "title": "Trigger Detection Threshold : RSSI value",
+        "type": "number",
+        "placeholder": "-65"
+      },
+      "maintainDetectionThreshold": {
+        "title": "Maintain Detection Threshold : RSSI value, must be smaller than trigger value",
+        "type": "number",
+        "placeholder": "-75"
       }
+
     }
   }
 }

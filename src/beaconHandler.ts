@@ -4,6 +4,10 @@ import { BeaconPlatform } from './platform';
 export class BeaconHandler {
   public beacons: Beacon[] = [];
 
+  public static triggerDetectionThreshold = -65;
+
+  public static maintainDetectionThreshold = -75;
+
   public addBeacon(accessory: PlatformAccessory){
     const beacon: Beacon = new Beacon(accessory);
     this.beacons.push(beacon);
@@ -43,14 +47,14 @@ export class Beacon {
   }
 
   public addTrack(deviceMac: string, rssi: number){
-    if(rssi > -75) { // TODO : replace by a better system
+    if(rssi > BeaconHandler.triggerDetectionThreshold) { // TODO : replace by a better system
       this.trackHistory.push(deviceMac);
       setTimeout(() => {
         this.removeOldestTrack();
       }
       , 10000);
       this.updateState();
-    } else if (rssi > -85){ // only accept lower signal if the device has been closer than triggering signal (-75)
+    } else if (rssi > BeaconHandler.maintainDetectionThreshold){ // only accept lower signal if device was closer than trigger signal
       if(this.trackHistory.some(track => track === deviceMac)){
         const service = this.accessory.getService(BeaconPlatform.Service.OccupancySensor)!;
         if((service.getCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected).value as boolean)){ // If the light was already awake

@@ -32,6 +32,13 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
     BeaconPlatform.instance = this;
     this.beaconHandler = new BeaconHandler();
 
+    this.log.info('Loading values from config : trigger ', this.config.triggerDetectionThreshold, ' maintain ',
+      this.config.maintainDetectionThreshold);
+
+    BeaconHandler.triggerDetectionThreshold = this.config.triggerDetectionThreshold;
+
+    BeaconHandler.maintainDetectionThreshold = this.config.maintainDetectionThreshold;
+
     this.log.debug('Finished initializing platform:', this.config.name);
     BeaconPlatform.apiAccess = this.api;
     BeaconPlatform.Service = this.api.hap.Service;
