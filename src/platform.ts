@@ -90,7 +90,7 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
     this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
 
     // Add default values in config
-    const beaconsSettings : Array<Record<string, any>> = BeaconPlatform.instance.config.devices;
+    const beaconsSettings : Array<Record<string, string | number>> = BeaconPlatform.instance.config.devices;
 
     const newSetting : BeaconSetting = <BeaconSetting>{};
     newSetting.name = displayName;

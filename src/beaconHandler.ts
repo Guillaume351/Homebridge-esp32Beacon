@@ -23,7 +23,7 @@ export class BeaconHandler {
       }
 
     });
-
+    BeaconPlatform.instance.log.warn('No beacon found for name ' + beaconName);
     return BeaconHandler.triggerDetectionThreshold;
   }
 
@@ -36,7 +36,7 @@ export class BeaconHandler {
       }
 
     });
-
+    BeaconPlatform.instance.log.warn('No beacon found for name ' + beaconName);
     return BeaconHandler.triggerDetectionThreshold;
   }
 
