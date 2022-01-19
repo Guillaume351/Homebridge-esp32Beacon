@@ -17,12 +17,12 @@ export class BeaconHandler {
   public static getTriggerDetectionThreshold(beaconName: string){
     const beaconsSettings : Array<BeaconSetting> = BeaconPlatform.instance.config.devices;
 
-    beaconsSettings.forEach(element => {
+    for (const element of beaconsSettings){
       if(element.name === beaconName){
         return element.triggerDetectionThreshold;
       }
+    }
 
-    });
     BeaconPlatform.instance.log.warn('No beacon found for name ' + beaconName);
     return BeaconHandler.triggerDetectionThreshold;
   }
@@ -30,12 +30,12 @@ export class BeaconHandler {
   public static getMaintainDetectionThreshold(beaconName: string){
     const beaconsSettings : Array<BeaconSetting> = BeaconPlatform.instance.config.devices;
 
-    beaconsSettings.forEach(element => {
+    for (const element of beaconsSettings){
       if(element.name === beaconName){
         return element.maintainDetectionThreshold;
       }
+    }
 
-    });
     BeaconPlatform.instance.log.warn('No beacon found for name ' + beaconName);
     return BeaconHandler.triggerDetectionThreshold;
   }
