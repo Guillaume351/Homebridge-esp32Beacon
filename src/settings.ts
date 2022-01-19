@@ -7,3 +7,9 @@ export const PLATFORM_NAME = 'homebridge-esp32beacon';
  * This must match the name of your plugin as defined the package.json
  */
 export const PLUGIN_NAME = 'Homebridge-esp32Beacon';
+
+export type BeaconSetting = {
+  name: string;
+  triggerDetectionThreshold: number;
+  maintainDetectionThreshold: number;
+};

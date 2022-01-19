@@ -1,5 +1,6 @@
 import { PlatformAccessory } from 'homebridge';
 import { BeaconPlatform } from './platform';
+import { BeaconSetting } from './settings';
 
 export class BeaconHandler {
   public beacons: Beacon[] = [];
@@ -12,6 +13,33 @@ export class BeaconHandler {
     const beacon: Beacon = new Beacon(accessory);
     this.beacons.push(beacon);
   }
+
+  public static getTriggerDetectionThreshold(beaconName: string){
+    const beaconsSettings : Array<BeaconSetting> = BeaconPlatform.instance.config.devices;
+
+    beaconsSettings.forEach(element => {
+      if(element.name === beaconName){
+        return element.triggerDetectionThreshold;
+      }
+
+    });
+
+    return BeaconHandler.triggerDetectionThreshold;
+  }
+
+  public static getMaintainDetectionThreshold(beaconName: string){
+    const beaconsSettings : Array<BeaconSetting> = BeaconPlatform.instance.config.devices;
+
+    beaconsSettings.forEach(element => {
+      if(element.name === beaconName){
+        return element.maintainDetectionThreshold;
+      }
+
+    });
+
+    return BeaconHandler.triggerDetectionThreshold;
+  }
+
 
   public getBeaconByUuid(uuid: string){
     for (const beacon of this.beacons){
@@ -46,15 +74,15 @@ export class Beacon {
 
   }
 
-  public addTrack(deviceMac: string, rssi: number){
-    if(rssi > BeaconHandler.triggerDetectionThreshold) { // TODO : replace by a better system
+  public addTrack(beaconName: string, deviceMac: string, rssi: number){
+    if(rssi > BeaconHandler.getTriggerDetectionThreshold(beaconName)) { // TODO : replace by a better system
       this.trackHistory.push(deviceMac);
       setTimeout(() => {
         this.removeOldestTrack();
       }
       , 10000);
       this.updateState();
-    } else if (rssi > BeaconHandler.maintainDetectionThreshold){ // only accept lower signal if device was closer than trigger signal
+    } else if (rssi > BeaconHandler.getMaintainDetectionThreshold(beaconName)){ // only accept lower signal if device closer than trigger
       if(this.trackHistory.some(track => track === deviceMac)){
         const service = this.accessory.getService(BeaconPlatform.Service.OccupancySensor)!;
         if((service.getCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected).value as boolean)){ // If the light was already awake

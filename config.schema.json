@@ -11,19 +11,37 @@
         "required": true,
         "default": "esp32beacon Platform"
       },
-      "triggerDetectionThreshold": {
-        "title": "Trigger Detection Threshold : RSSI value",
-        "type": "number",
-        "required": true,
-        "placeholder": "-65"
-      },
-      "maintainDetectionThreshold": {
-        "title": "Maintain Detection Threshold : RSSI value, must be smaller than trigger value",
-        "type": "number",
-        "required": true,
-        "placeholder": "-75"
-      }
+      "devices":{
+        "title": "Devices",
+        "type": "array",
+        "required": "true",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name":{
+              "title": "Name",
+              "description": "ID of the beacon",
+              "type": "string",
+              "default": "esp32beacon",
+              "minLength": 1,
+              "required": true
+            },
+            "triggerDetectionThreshold": {
+              "title": "Trigger Detection Threshold : RSSI value",
+              "type": "number",
+              "required": true,
+              "placeholder": "-65"
+            },
+            "maintainDetectionThreshold": {
+              "title": "Maintain Detection Threshold : RSSI value, must be smaller than trigger value",
+              "type": "number",
+              "required": true,
+              "placeholder": "-75"
+            }
+          }
+        }
 
+      }
     }
   }
 }

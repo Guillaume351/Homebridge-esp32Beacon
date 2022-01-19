@@ -17,7 +17,7 @@ const registerBeacon = async (req: Request, res: Response, next: NextFunction) =
 
 
   } else {
-    BeaconPlatform.instance.addNewAccessory('Beacon', uuid);
+    BeaconPlatform.instance.addNewAccessory(uid, uuid);
     return res.status(200).json({
       message: 'Device successfully registered ' + uuid,
     });
@@ -35,8 +35,8 @@ const beaconTrack = async (req: Request, res: Response, next: NextFunction) => {
   // get the switch
   const existingAccessory = BeaconPlatform.accessories.find(accessory => accessory.UUID === uuid);
   if(existingAccessory){
-    const beacon: Beacon = BeaconPlatform.instance.beaconHandler.getBeaconByUuid(uuid);
-    beacon.addTrack(deviceMac, rssi);
+    const beacon: Beacon = BeaconPlatform.instance.beaconHandler.getBeaconByUuid(uuid) as Beacon;
+    beacon.addTrack(uid, deviceMac, rssi);
     return res.status(200).json({
       message: 'Track successfuly saved : ' + uuid,
     });

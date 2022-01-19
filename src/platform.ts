@@ -1,6 +1,6 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
-import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
+import { BeaconSetting, PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { EspSwitchPlatformAccessory } from './platformAccessory';
 
 import httpServer from './server';
@@ -12,7 +12,7 @@ import { BeaconHandler } from './beaconHandler';
  * parse the user config and discover/register accessories with Homebridge.
  */
 export class BeaconPlatform implements DynamicPlatformPlugin {
-  public static instance; // TODO : replace this once I learn typescript/javascript..
+  public static instance: BeaconPlatform; // TODO : replace this once I learn typescript/javascript..
 
   public static Service: typeof Service;
   public static Characteristic: typeof Characteristic;
@@ -32,12 +32,7 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
     BeaconPlatform.instance = this;
     this.beaconHandler = new BeaconHandler();
 
-    this.log.info('Loading values from config : trigger ', this.config.triggerDetectionThreshold, ' maintain ',
-      this.config.maintainDetectionThreshold);
-
-    BeaconHandler.triggerDetectionThreshold = this.config.triggerDetectionThreshold;
-
-    BeaconHandler.maintainDetectionThreshold = this.config.maintainDetectionThreshold;
+    this.log.info('Loading values from config : ', this.config.devices);
 
     this.log.debug('Finished initializing platform:', this.config.name);
     BeaconPlatform.apiAccess = this.api;
@@ -89,10 +84,20 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
 
     // create the accessory handler for the newly create accessory
     // this is imported from `platformAccessory.ts`
-    new EspSwitchPlatformAccessory(this, accessory);
+    new EspSwitchPlatformAccessory(this, accessory, displayName);
 
     // link the accessory to your platform
     this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+
+    // Add default values in config
+    const beaconsSettings : Array<Record<string, any>> = BeaconPlatform.instance.config.devices;
+
+    const newSetting : BeaconSetting = <BeaconSetting>{};
+    newSetting.name = displayName;
+    newSetting.triggerDetectionThreshold = BeaconHandler.triggerDetectionThreshold;
+    newSetting.maintainDetectionThreshold = BeaconHandler.maintainDetectionThreshold;
+
+    beaconsSettings.push(newSetting);
 
     // add the beacon to the beacon handler
     this.beaconHandler.addBeacon(accessory);
@@ -139,7 +144,7 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
 
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        new EspSwitchPlatformAccessory(this, existingAccessory);
+        new EspSwitchPlatformAccessory(this, existingAccessory, existingAccessory.displayName);
 
         // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
         // remove platform accessories when no longer present
@@ -158,7 +163,7 @@ export class BeaconPlatform implements DynamicPlatformPlugin {
 
         // create the accessory handler for the newly create accessory
         // this is imported from `platformAccessory.ts`
-        new EspSwitchPlatformAccessory(this, accessory);
+        new EspSwitchPlatformAccessory(this, accessory, accessory.displayName);
 
         // link the accessory to your platform
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
