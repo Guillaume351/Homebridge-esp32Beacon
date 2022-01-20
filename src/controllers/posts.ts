@@ -13,7 +13,7 @@ const registerBeacon = async (req: Request, res: Response, next: NextFunction) =
   if(existingAccessory){
     return res.status(200).json({
       message: 'Device already registered : ' + uuid,
-      minRssi: BeaconHandler.getTriggerDetectionThreshold(uid),
+      maxRssi: BeaconHandler.getTriggerDetectionThreshold(uid),
     });
 
 
@@ -21,7 +21,7 @@ const registerBeacon = async (req: Request, res: Response, next: NextFunction) =
     BeaconPlatform.instance.addNewAccessory(uid, uuid);
     return res.status(200).json({
       message: 'Device successfully registered ' + uuid,
-      minRssi: BeaconHandler.getTriggerDetectionThreshold(uid),
+      maxRssi: BeaconHandler.getTriggerDetectionThreshold(uid),
     });
   }
 
@@ -41,7 +41,7 @@ const beaconTrack = async (req: Request, res: Response, next: NextFunction) => {
     beacon.addTrack(uid, deviceMac, rssi);
     return res.status(200).json({
       message: 'Track successfuly saved : ' + uuid,
-      minRssi: BeaconHandler.getCurrentRequiredRssi(uid, uuid),
+      maxRssi: BeaconHandler.getCurrentRequiredRssi(uid, uuid),
     });
   } else {
     return res.status(404).json({
@@ -52,4 +52,4 @@ const beaconTrack = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 
-export default { registerBeacon, beaconTrack};
+export default {registerBeacon, beaconTrack};
