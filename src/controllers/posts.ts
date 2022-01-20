@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { BeaconPlatform } from '../platform';
 import { Logger } from 'homebridge';
-import { Beacon } from '../beaconHandler';
+import { Beacon, BeaconHandler } from '../beaconHandler';
 
 const registerBeacon = async (req: Request, res: Response, next: NextFunction) => {
   // get the post id from the req
@@ -13,6 +13,7 @@ const registerBeacon = async (req: Request, res: Response, next: NextFunction) =
   if(existingAccessory){
     return res.status(200).json({
       message: 'Device already registered : ' + uuid,
+      minRssi: BeaconHandler.getTriggerDetectionThreshold(uid),
     });
 
 
@@ -20,6 +21,7 @@ const registerBeacon = async (req: Request, res: Response, next: NextFunction) =
     BeaconPlatform.instance.addNewAccessory(uid, uuid);
     return res.status(200).json({
       message: 'Device successfully registered ' + uuid,
+      minRssi: BeaconHandler.getTriggerDetectionThreshold(uid),
     });
   }
 
@@ -35,10 +37,11 @@ const beaconTrack = async (req: Request, res: Response, next: NextFunction) => {
   // get the switch
   const existingAccessory = BeaconPlatform.accessories.find(accessory => accessory.UUID === uuid);
   if(existingAccessory){
-    const beacon: Beacon = BeaconPlatform.instance.beaconHandler.getBeaconByUuid(uuid) as Beacon;
+    const beacon: Beacon = BeaconHandler.getBeaconByUuid(uuid) as Beacon;
     beacon.addTrack(uid, deviceMac, rssi);
     return res.status(200).json({
       message: 'Track successfuly saved : ' + uuid,
+      minRssi: BeaconHandler.getCurrentRequiredRssi(uid, uuid),
     });
   } else {
     return res.status(404).json({

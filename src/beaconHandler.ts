@@ -3,7 +3,7 @@ import { BeaconPlatform } from './platform';
 import { BeaconSetting } from './settings';
 
 export class BeaconHandler {
-  public beacons: Beacon[] = [];
+  public static beacons: Beacon[] = [];
 
   public static triggerDetectionThreshold = -65;
 
@@ -11,7 +11,18 @@ export class BeaconHandler {
 
   public addBeacon(accessory: PlatformAccessory){
     const beacon: Beacon = new Beacon(accessory);
-    this.beacons.push(beacon);
+    BeaconHandler.beacons.push(beacon);
+  }
+
+  public static getCurrentRequiredRssi(beaconName: string, uuid: string){
+    const beacon: Beacon = this.getBeaconByUuid(uuid) as Beacon;
+
+    const service = beacon.accessory.getService(BeaconPlatform.Service.OccupancySensor)!;
+    if((service.getCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected).value as boolean)){
+      return BeaconHandler.getMaintainDetectionThreshold(beaconName);
+    } else {
+      return BeaconHandler.getTriggerDetectionThreshold(beaconName);
+    }
   }
 
   public static getTriggerDetectionThreshold(beaconName: string){
@@ -40,15 +51,14 @@ export class BeaconHandler {
     return BeaconHandler.triggerDetectionThreshold;
   }
 
-
-  public getBeaconByUuid(uuid: string){
-    for (const beacon of this.beacons){
+  public static getBeaconByUuid(uuid: string) : Beacon | undefined {
+    for (const beacon of BeaconHandler.beacons){
       if(beacon.accessory.UUID === uuid){
         return beacon;
       }
     }
+    return undefined;
   }
-
 }
 
 export class Beacon {
