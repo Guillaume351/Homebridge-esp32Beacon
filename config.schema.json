@@ -11,6 +11,12 @@
         "required": true,
         "default": "esp32beacon Platform"
       },
+      "singleRoomPerMac": {
+        "title": "Single Room Per Mac",
+        "type": "boolean",
+        "required": true,
+        "default": true
+      },
       "devices":{
         "title": "Devices",
         "type": "array",
