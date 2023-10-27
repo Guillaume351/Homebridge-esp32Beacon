@@ -1,6 +1,6 @@
-import { PlatformAccessory } from "homebridge";
-import { BeaconPlatform } from "./platform";
-import { BeaconSetting } from "./settings";
+import { PlatformAccessory } from 'homebridge';
+import { BeaconPlatform } from './platform';
+import { BeaconSetting } from './settings';
 
 export class BeaconHandler {
   public static beacons: Beacon[] = [];
@@ -20,7 +20,7 @@ export class BeaconHandler {
     const beacon: Beacon = this.getBeaconByUuid(uuid) as Beacon;
 
     const service = beacon.accessory.getService(
-      BeaconPlatform.Service.OccupancySensor
+      BeaconPlatform.Service.OccupancySensor,
     )!;
     if (
       service.getCharacteristic(BeaconPlatform.Characteristic.OccupancyDetected)
@@ -42,7 +42,7 @@ export class BeaconHandler {
       }
     }
 
-    BeaconPlatform.instance.log.warn("No beacon found for name " + beaconName);
+    BeaconPlatform.instance.log.warn('No beacon found for name ' + beaconName);
     return BeaconHandler.triggerDetectionThreshold;
   }
 
@@ -56,7 +56,7 @@ export class BeaconHandler {
       }
     }
 
-    BeaconPlatform.instance.log.warn("No beacon found for name " + beaconName);
+    BeaconPlatform.instance.log.warn('No beacon found for name ' + beaconName);
     return BeaconHandler.triggerDetectionThreshold;
   }
 
@@ -80,17 +80,17 @@ export class Beacon {
    */
   public updateState() {
     const service = this.accessory.getService(
-      BeaconPlatform.Service.OccupancySensor
+      BeaconPlatform.Service.OccupancySensor,
     )!;
     if (this.trackHistory.length > 0) {
       service.updateCharacteristic(
         BeaconPlatform.Characteristic.OccupancyDetected,
-        true
+        true,
       );
     } else {
       service.updateCharacteristic(
         BeaconPlatform.Characteristic.OccupancyDetected,
-        false
+        false,
       );
     }
   }
@@ -117,11 +117,11 @@ export class Beacon {
       // only accept lower signal if device closer than trigger
       if (this.trackHistory.some((track) => track === deviceMac)) {
         const service = this.accessory.getService(
-          BeaconPlatform.Service.OccupancySensor
+          BeaconPlatform.Service.OccupancySensor,
         )!;
         if (
           service.getCharacteristic(
-            BeaconPlatform.Characteristic.OccupancyDetected
+            BeaconPlatform.Characteristic.OccupancyDetected,
           ).value as boolean
         ) {
           // If the light was already awake
