@@ -2,7 +2,7 @@
   "private": false,
   "displayName": "esp32 Beacon",
   "name": "homebridge-esp32beacon",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Presence detector based on esp32 for Homebridge",
   "license": "Apache-2.0",
   "repository": {
